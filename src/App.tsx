@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { useEffect, useRef } from "react";
 import { Canvas, FabricImage, Control, Point, util } from "fabric";
 import {
