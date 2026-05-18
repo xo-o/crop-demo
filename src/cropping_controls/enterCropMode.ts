@@ -1,5 +1,3 @@
-
-//@ts-nocheck
 import { type FabricImage, type TPointerEventInfo, Point, FabricObject, util } from 'fabric';
 import { createImageCroppingControls } from './croppingControls';
 import { cropPanMoveHandler, renderGhostImage } from './croppingHandlers';
@@ -159,6 +157,8 @@ export const enterCropMode = (fabricImage: FabricImage) => {
 
         img.cropX = newCropX;
         img.cropY = newCropY;
+
+        img.setCoords();
 
         // @ts-expect-error - Point constructor type mismatch in fabric v6/v7
         lastPointer = new Point(currentPointer.x, currentPointer.y);
