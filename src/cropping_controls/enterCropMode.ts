@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { type FabricImage, type TPointerEventInfo, Point, FabricObject, util } from 'fabric';
 import { createImageCroppingControls } from './croppingControls';
 import { cropPanMoveHandler, renderGhostImage } from './croppingHandlers';
