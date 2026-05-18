@@ -1,25 +1,20 @@
-//@ts-nocheck
 import { useEffect, useRef } from "react";
-import { Canvas, FabricImage, Control, Point, util } from "fabric";
-import {
-  createImageCroppingControls,
-  cropPanMoveHandler,
-  renderGhostImage,
-  enterCropMode as baseEnterCropMode,
-} from "./cropping_controls"; // your cropping handlers
+import { Canvas, FabricImage } from "fabric";
+import { enterCropMode } from "./cropping_controls";
 
 function App() {
   const canvasRef = useRef<Canvas | null>(null);
 
   useEffect(() => {
-    canvasRef.current = new Canvas("canvas", {
+    const canvas = new Canvas("canvas", {
       width: 900,
       height: 600,
       backgroundColor: "#f3f3f3",
     });
+    canvasRef.current = canvas;
 
     return () => {
-      canvasRef.current?.dispose();
+      canvas.dispose();
     };
   }, []);
 
@@ -37,61 +32,24 @@ function App() {
       selectable: true,
     });
 
-    canvasRef.current?.add(img);
-    canvasRef.current?.centerObject(img);
-    canvasRef.current?.setActiveObject(img);
-    canvasRef.current?.renderAll();
+    const canvas = canvasRef.current;
+    if (canvas) {
+      canvas.add(img);
+      canvas.centerObject(img);
+      canvas.setActiveObject(img);
+      canvas.renderAll();
 
-    // Add Canva-style crop
-    img.__isCropping = false;
-    img.__originalControls = img.controls;
-    img.__originalPadding = img.padding;
-
-    // persistent dblclick listener
-    img.on("mousedblclick", () => {
-      if (!img.__isCropping) {
+      // persistent dblclick listener to enter crop mode
+      img.on("mousedblclick", () => {
         enterCropMode(img);
-      } else {
-        exitCropMode(img);
-      }
-    });
-  };
-
-  const enterCropMode = (fabricImage: FabricImage & any) => {
-    fabricImage.__isCropping = true;
-
-    fabricImage.__originalControls = fabricImage.controls;
-    fabricImage.__originalPadding = fabricImage.padding;
-
-    fabricImage.padding = 0;
-    fabricImage.controls = createImageCroppingControls();
-
-    // image panning inside crop rectangle
-    fabricImage.on("moving", cropPanMoveHandler);
-    // render ghost overlay
-    fabricImage.on("before:render", renderGhostImage);
-
-    fabricImage.setCoords();
-    fabricImage.canvas?.requestRenderAll();
-  };
-
-  const exitCropMode = (fabricImage: FabricImage & any) => {
-    fabricImage.__isCropping = false;
-
-    fabricImage.padding = fabricImage.__originalPadding;
-    fabricImage.controls = fabricImage.__originalControls;
-
-    fabricImage.off("moving", cropPanMoveHandler);
-    fabricImage.off("before:render", renderGhostImage);
-
-    fabricImage.setCoords();
-    fabricImage.canvas?.requestRenderAll();
+      });
+    }
   };
 
   return (
     <>
       <canvas id="canvas" />
-      <button onClick={addImageByUrl} className="border p-2 mt-4">
+      <button onClick={addImageByUrl} className="border p-2 mt-4 block">
         Add Image
       </button>
     </>
